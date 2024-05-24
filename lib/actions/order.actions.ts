@@ -9,6 +9,7 @@ import Order from '../database/models/order.model';
 import Event from '../database/models/event.model';
 import { ObjectId } from 'mongodb';
 import User from '../database/models/user.model';
+import mongoose from 'mongoose';
 
 export const checkoutOrder = async (order: CheckoutOrderParams) => {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -49,9 +50,14 @@ export const createOrder = async (order: CreateOrderParams) => {
         await connectToDatabase();
 
         const newOrder = await Order.create({
-            ...order,
-            event: order.eventId,
-            buyer: order.buyerId,
+            // ...order,
+            // event: order.eventId,
+            // buyer: order.buyerId,
+            stripeId: order.stripeId,
+            totalAmount: order.totalAmount,
+            event: new mongoose.Types.ObjectId(order.eventId), // Ensure ObjectId
+            buyer: new mongoose.Types.ObjectId(order.buyerId), // Ensure ObjectId
+            createdAt: order.createdAt,
         });
 
         return JSON.parse(JSON.stringify(newOrder));
