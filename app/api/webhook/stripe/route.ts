@@ -19,6 +19,8 @@ export async function POST(request: Request) {
     // Get the ID and type
     const eventType = event.type
 
+    console.log(eventType, "event type form stripe webhook")
+
     // CREATE
     if (eventType === 'checkout.session.completed') {
         const { id, amount_total, metadata } = event.data.object
@@ -32,6 +34,7 @@ export async function POST(request: Request) {
         }
 
         const newOrder = await createOrder(order)
+        console.log('New order created:', newOrder)
         return NextResponse.json({ message: 'OK', order: newOrder })
     }
 
